@@ -51,6 +51,24 @@ node server.js
 
 Visit `http://localhost:7000` in your browser.
 
+## ⚠️ Security Warning
+
+**This dashboard is designed for local network or Tailscale use only. Do not expose it to the public internet.**
+
+The dashboard provides direct access to system logs, service controls, file browsing, and command execution endpoints. There is no authentication layer built in. Running it on a public-facing port could allow anyone to read your agent memory, restart services, or view sensitive session data.
+
+**Safe usage:**
+- Access via `localhost` on the same machine
+- Access via your local LAN (e.g. `192.168.x.x:7000`)
+- Access via [Tailscale](https://tailscale.com/) or another private VPN/overlay network
+
+**Do not:**
+- Port-forward the dashboard to the internet
+- Expose it through a reverse proxy without adding authentication (e.g. Authelia, Authentik, basic auth)
+- Run it on a public VPS without a firewall restricting access to the dashboard port
+
+If you need remote access, use Tailscale or set up a reverse proxy with proper authentication in front of it.
+
 ## 📦 Manual Install
 
 ### Prerequisites
