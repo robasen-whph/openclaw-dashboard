@@ -1458,10 +1458,6 @@ body {
         <div id="timelineCanvas" style="min-height:60px;"></div>
       </div>
 
-      <div class="card mb-24">
-        <h3 class="card-title">Peak Hours Heatmap (Last 30 Days)</h3>
-        <div id="activityHeatmap" style="overflow-x:auto;"></div>
-      </div>
 
       <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px;padding:16px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;">
         <div class="filter-chips" id="statusFilters">
@@ -3657,44 +3653,6 @@ function calculateStreak() {
   }
 }
 
-// Activity Heatmap
-let activityHeatmap = {};
-async function fetchActivityHeatmap() {
-  try {
-    const res = await fetch('/api/activity-heatmap');
-    activityHeatmap = await res.json();
-    renderHeatmap();
-  } catch {}
-}
-
-function renderHeatmap() {
-  const el = document.getElementById('activityHeatmap');
-  if (!el) return;
-  
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const maxCount = Math.max(...Object.values(activityHeatmap), 1);
-  
-  let html = '<div style="display:inline-grid;grid-template-columns:40px repeat(24,1fr);gap:4px;font-family:\'JetBrains Mono\',monospace;font-size:10px;">';
-  html += '<div></div>';
-  for (let h = 0; h < 24; h++) {
-    html += `<div style="text-align:center;color:var(--text-muted);">${h}</div>`;
-  }
-  
-  for (let d = 0; d < 7; d++) {
-    html += `<div style="display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:var(--text-muted);">${days[d]}</div>`;
-    for (let h = 0; h < 24; h++) {
-      const key = `${d}-${h}`;
-      const count = activityHeatmap[key] || 0;
-      const intensity = count > 0 ? Math.min((count / maxCount) * 100, 100) : 0;
-      const color = intensity > 0 ? `rgba(99, 102, 241, ${0.2 + intensity * 0.008})` : 'var(--bg-tertiary)';
-      html += `<div style="width:24px;height:24px;background:${color};border-radius:4px;cursor:pointer;" title="${days[d]} ${h}:00 - ${count} messages"></div>`;
-    }
-  }
-  
-  html += '</div>';
-  el.innerHTML = html;
-}
-
 // Logs Viewer
 let logAutoRefreshInterval = null;
 
@@ -3818,12 +3776,10 @@ toggleSessionExpand = function(key, e) {
 // Fetch new data on load
 fetchTailscaleStatus();
 fetchLifetimeStats();
-fetchActivityHeatmap();
 
 // Periodic updates
 setInterval(fetchTailscaleStatus, 30000);
 setInterval(fetchLifetimeStats, 60000);
-setInterval(fetchActivityHeatmap, 60000);
 setInterval(updatePageTitle, 5000);
 setInterval(() => { if (costs.perDay) calculateStreak(); }, 10000);
 
