@@ -6,6 +6,7 @@ const { exec } = require('child_process');
 
 // Configuration via environment variables
 const PORT = parseInt(process.env.DASHBOARD_PORT || '7000');
+const BIND_HOST = process.env.DASHBOARD_HOST || process.env.HOST || '127.0.0.1';
 const OPENCLAW_DIR = process.env.OPENCLAW_DIR || path.join(os.homedir(), '.openclaw');
 const WORKSPACE_DIR = process.env.WORKSPACE_DIR || process.env.OPENCLAW_WORKSPACE || process.cwd();
 const AGENT_ID = process.env.OPENCLAW_AGENT || 'main';
@@ -1284,7 +1285,7 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, BIND_HOST, () => {
   console.log('Dashboard: http://0.0.0.0:' + PORT);
   // Usage scrape on-demand only (triggered via API)
 });
